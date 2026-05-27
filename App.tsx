@@ -1,45 +1,42 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { AppProvider } from './src/context/AppContext';
+import HomeScreen from './src/screens/HomeScreen';
+import SetupScreen from './src/screens/SetupScreen';
+import VoiceIntakeScreen from './src/screens/VoiceIntakeScreen';
+import ResultsScreen from './src/screens/ResultsScreen';
+import { TestTemplate } from './src/types';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+export type RootStackParamList = {
+  Home: undefined;
+  Setup: { template: TestTemplate | null };
+  VoiceIntake: { template: TestTemplate };
+  Results: { sessionId: string; title: string };
+};
 
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export default function App() {
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AppProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
+            >
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="Setup" component={SetupScreen} />
+              <Stack.Screen name="VoiceIntake" component={VoiceIntakeScreen} />
+              <Stack.Screen name="Results" component={ResultsScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </AppProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
